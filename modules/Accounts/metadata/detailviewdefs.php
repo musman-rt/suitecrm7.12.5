@@ -98,6 +98,11 @@ array(
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_CONTACTS_TAB' =>
+        array(
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
       ),
     ),
     'panels' =>
@@ -247,6 +252,17 @@ array(
             'name' => 'date_modified',
             'label' => 'LBL_DATE_MODIFIED',
             'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+          ),
+        ),
+      ),
+      'LBL_CONTACTS_TAB' =>
+      array(
+        0 =>
+        array(
+          0 =>
+          array(
+            'name' => 'contacts_line_items',
+            'label' => 'LBL_CONTACTS_LINE_ITEMS',
           ),
         ),
       ),

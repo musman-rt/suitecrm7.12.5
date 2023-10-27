@@ -351,6 +351,27 @@ $dictionary['Account'] = array(
             'comment' => 'The first campaign name for Account (Meta-data only)',
         ),
 
+        'contacts_line_items' => array (
+          'required' => false,
+          'name' => 'contacts_line_items',
+          'vname' => 'LBL_CONTACTS_LINE_ITEMS',
+          'type' => 'function',
+          'source' => 'non-db',
+          'massupdate' => 0,
+          'importable' => 'false',
+          'duplicate_merge' => 'disabled',
+          'duplicate_merge_dom_value' => 0,
+          'audited' => false,
+          'reportable' => false,
+          'inline_edit' => false,
+          'function' => 
+          array (
+            'name' => 'tabs_display_lines',
+            'returns' => 'html',
+            'include' => 'modules/Contacts/Tabs_Line_Items.php',
+          ),
+        ),
+
         'prospect_lists' => array(
             'name' => 'prospect_lists',
             'type' => 'link',
