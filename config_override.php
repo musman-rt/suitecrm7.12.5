@@ -1,3 +1,39 @@
 <?php
 /***CONFIGURATOR***/
+$sugar_config['module_tab_view'] = 'yes';
+$sugar_config['addAjaxBannedModules'][0] = 'FP_events';
+$sugar_config['addAjaxBannedModules'][1] = 'AOS_Contracts';
+$sugar_config['addAjaxBannedModules'][2] = 'AOR_Scheduled_Reports';
+$sugar_config['addAjaxBannedModules'][3] = 'AOS_PDF_Templates';
+$sugar_config['addAjaxBannedModules'][4] = 'jjwg_Areas';
+$sugar_config['addAjaxBannedModules'][5] = 'AOR_Reports';
+$sugar_config['addAjaxBannedModules'][6] = 'jjwg_Markers';
+$sugar_config['addAjaxBannedModules'][7] = 'AOW_WorkFlow';
+$sugar_config['addAjaxBannedModules'][8] = 'jjwg_Maps';
+$sugar_config['addAjaxBannedModules'][9] = 'AOS_Quotes';
+$sugar_config['addAjaxBannedModules'][10] = 'AOS_Products';
+$sugar_config['addAjaxBannedModules'][11] = 'AOS_Product_Categories';
+$sugar_config['addAjaxBannedModules'][12] = 'AOS_Invoices';
+$sugar_config['addAjaxBannedModules'][13] = 'FP_Event_Locations';
+$sugar_config['addAjaxBannedModules'][14] = 'Spots';
+$sugar_config['addAjaxBannedModules'][15] = 'SecurityGroups';
+$sugar_config['addAjaxBannedModules'][16] = 'Prospects';
+$sugar_config['addAjaxBannedModules'][17] = 'AOBH_BusinessHours';
+$sugar_config['addAjaxBannedModules'][18] = 'ProspectLists';
+$sugar_config['addAjaxBannedModules'][19] = 'Cases';
+$sugar_config['addAjaxBannedModules'][20] = 'AOK_KnowledgeBase';
+$sugar_config['addAjaxBannedModules'][21] = 'Bugs';
+$sugar_config['addAjaxBannedModules'][22] = 'ResourceCalendar';
+$sugar_config['addAjaxBannedModules'][23] = 'Home';
+$sugar_config['addAjaxBannedModules'][24] = 'AOK_Knowledge_Base_Categories';
+$sugar_config['addAjaxBannedModules'][25] = 'Calls';
+$sugar_config['addAjaxBannedModules'][26] = 'Meetings';
+$sugar_config['addAjaxBannedModules'][27] = 'AM_ProjectTemplates';
+$sugar_config['addAjaxBannedModules'][28] = 'Tasks';
+$sugar_config['addAjaxBannedModules'][29] = 'Notes';
+$sugar_config['addAjaxBannedModules'][30] = 'Opportunities';
+$sugar_config['addAjaxBannedModules'][31] = 'jjwg_Address_Cache';
+$sugar_config['addAjaxBannedModules'][32] = 'Contacts';
+$sugar_config['addAjaxBannedModules'][33] = 'Accounts';
+$sugar_config['addAjaxBannedModules'][34] = 'Leads';
 /***CONFIGURATOR***/
