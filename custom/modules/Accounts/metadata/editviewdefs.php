@@ -207,7 +207,7 @@ array(
       ),
       'LBL_CONTACTS_PANEL' => array(
         0 => array(
-
+          'name' => 'custom_account_contacts'
         )
       ),
     ),
