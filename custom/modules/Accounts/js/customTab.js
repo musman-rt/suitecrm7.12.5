@@ -1,48 +1,9 @@
-let arr_module = ['activities', 'history', 'documents', 'opportunities', 'campaigns', 'leads', 'accounts', 'cases', 'account_aos_quotes', 'account_aos_invoices', 'account_aos_contracts', 'products_services_purchased', 'bugs', 'project', 'securitygroups'];
-let tab_module = ['contacts']
+let salutation_dom = Object.keys(SUGAR.language.languages['app_list_strings']['salutation_dom']);
 
-var contactNo = 0;
-
-$(document).ready(function(){
-    for(let i = 0; i < tab_module.length; i++){
-        $('#whole_subpanel_'+tab_module[i]).hide();
-    }
+let contactNo = 0;
+let totalCount = 1;
+function insertContacts(bean){
     
-    $('#tab0').on('click', function(){
-        showHide();
-    });
-});
-
-
-function showTab (tab = "") {
-    showHide(tab);
-}
-
-function showHide(tab){
-    if(typeof tab !== 'undefined' && tab != ""){
-        for(let i = 0; i < tab_module.length; i++){
-            $('#whole_subpanel_'+tab_module[i]).show();
-        }
-    
-        for(let i = 0; i < arr_module.length; i++){
-            $('#whole_subpanel_'+arr_module[i]).hide();
-        }
-    } else {
-        for(let i = 0; i < tab_module.length; i++){
-            $('#whole_subpanel_'+tab_module[i]).hide();
-        }
-    
-        for(let i = 0; i < arr_module.length; i++){
-            $('#whole_subpanel_'+arr_module[i]).show();
-        }
-    }
-}
-
-
-function insertContacts(contacts){
-
-    console.log(module_sugar_grp1);
-
     tableid = "contact";
 
     insertContactHeader(tableid);
@@ -51,27 +12,32 @@ function insertContacts(contacts){
         document.getElementById(tableid + '_head').style.display = "";
     }
 
+    document.getElementById('totalCount').value = totalCount;
 
     tablebody = document.createElement("tbody");
     tablebody.id = "contactBody" + contactNo;
     document.getElementById(tableid).appendChild(tablebody);
 
-    var x = tablebody.insertRow(-1);
+    let x = tablebody.insertRow(-1);
     x.id = 'contact_row' + contactNo;
   
-    var a = x.insertCell(0);
-    a.innerHTML = "<input type='text' name='name[" + contactNo + "]' id='name" + contactNo + "'  value='' title='' >";
-  
-    var b = x.insertCell(1);
-    b.innerHTML = "<input autocomplete='off' type='email' name='email[" + contactNo + "]' id='email" + contactNo + "' value='' title=''>";
+    let i = 0;
 
-    var c = x.insertCell(2)
-    c.innerHTML = "<input type='hidden' name='contact_deleted[" + contactNo + "]' id='contact_deleted" + contactNo + "' value='0'><button type='button' id='contact_delete" + contactNo + "' class='button contact_delete' value='' tabindex='116' onclick='markContactDeleted(" + contactNo + ")'><span class=\"suitepicon suitepicon-action-clear\"></span></button>";
+    fields_def.forEach(function(element){
+        if(element.label !== 'undefined'){
+            let a = x.insertCell(i);
+            a.innerHTML = getFieldsByType(element, contactNo, 'contact');
+            if(i == 7){
+                let b = x.insertCell(i+1);
+                b.innerHTML = "<input type='hidden' name='contact_id[]' id='id" + contactNo + "' value='0'><input type='hidden' name='contact_deleted[]' id='contact_deleted" + contactNo + "' value='0'><button type='button' id='contact_delete" + contactNo + "' class='button contact_delete' value='' tabindex='116' onclick='markContactDeleted(" + contactNo + ")'><span class=\"suitepicon suitepicon-action-clear\"></span></button>";
+            }
+        }
+        i++;
+    });
 
-    for(var c in contacts){
-        console.log(c);
+    for(let c in bean){
         if(document.getElementById(c + contactNo) !== null){
-            document.getElementById(c + contactNo).value = contacts[c];
+            document.getElementById(c + contactNo).value = bean[c];
         }
     }
 
@@ -80,6 +46,7 @@ function insertContacts(contacts){
     }
 
     contactNo++;
+    totalCount++;
 
     return contactNo - 1;
 
@@ -94,20 +61,19 @@ function insertContacts(contacts){
     var x=tablehead.insertRow(-1);
     x.id='contact_head';
   
-    var a=x.insertCell(0);
-    a.style.color="rgb(68,68,68)";
-    a.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_NAME');
-  
-    var b=x.insertCell(1);
-    b.style.color="rgb(68,68,68)";
-    b.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_EMAIL');
-  
-    var h=x.insertCell(2);
-    h.style.color="rgb(68,68,68)";
-    h.innerHTML='&nbsp;';
+    let i = 0;
+
+    fields_def.forEach(function(element){
+        if(element.label !== 'undefined'){
+            var a = x.insertCell(i);
+            a.style.color = "rgb(68,68,68)";
+            a.innerHTML = element.label;
+        }
+        i++;
+    });
   }
 
-  function insertContactFooter(tableid, contactNo){
+function insertContactFooter(tableid, contactNo){
     tablefooter = document.createElement("tfoot");
     tablefooter.id = tableid +"_tfoot";
     document.getElementById(tableid).appendChild(tablefooter);
@@ -118,12 +84,36 @@ function insertContacts(contacts){
     footer_cell.innerHTML="<input type='button' tabindex='116' class='button add_contact' value='Add Contact' id='"+tableid+""+contactNo+"addContact' onclick='insertContacts(\""+tableid+""+contactNo+"\",\""+contactNo+"\")' />";
 }
 
-  function markContactDeleted(ln) {
-  document.getElementById('contactBody' + ln).style.display = 'none';
-  document.getElementById('contact_delete' + ln).value = '1';
-  document.getElementById('contact_delete' + ln).onclick = '';
+function markContactDeleted(ln) {
+    document.getElementById('contactBody' + ln).style.display = 'none';
+    document.getElementById('contact_deleted' + ln).value = '1';
+    document.getElementById('contact_deleted' + ln).onclick = '';
+}
 
-  /*if(checkValidate('EditView',key+'product_id' +ln)){
-    removeFromValidate('EditView',key+'product_id' +ln);
-  }*/
+function getFieldsByType(element, contactNo, type){
+    switch (element.type) {
+        case 'varchar':
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + element.name+contactNo + "'  value='' title='' >";
+        return html;
+
+        case 'enum':
+            html = "<select name='"+type+'_'+element.name+"[]' id='" + element.name+contactNo + "'>'"+makeDP()+"'</selec>";
+        return html;
+
+        case 'name':
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + element.name+contactNo + "'  value='' title='' >";
+        return html;
+
+        case 'phone':
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + element.name+contactNo + "'  value='' title='' >";
+        return html;
+    }
+}
+
+function makeDP(){
+    let html = "";
+    for(let i = 0; i < salutation_dom.length; i++){
+        html += '<option value='+salutation_dom[i]+'>'+salutation_dom[i]+'</option>'
+    }
+    return html;
 }

@@ -36,4 +36,6 @@ $sugar_config['addAjaxBannedModules'][31] = 'jjwg_Address_Cache';
 $sugar_config['addAjaxBannedModules'][32] = 'Contacts';
 $sugar_config['addAjaxBannedModules'][33] = 'Accounts';
 $sugar_config['addAjaxBannedModules'][34] = 'Leads';
+$sugar_config['tabOptions']['enable'] = 'Yes';
+$sugar_config['tabOptions']['modules'] = array('Accounts' => 'Contact');
 /***CONFIGURATOR***/

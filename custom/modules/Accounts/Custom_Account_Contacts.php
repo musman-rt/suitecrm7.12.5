@@ -25,45 +25,85 @@
 
 function custom_account_contacts($focus, $field, $value, $view)
 {
+    global $sugar_config;
+    $tabModule = $sugar_config['tabOptions']['modules'][$focus->module_name];
 
     $html = '';
+
+    require_once 'include/SubPanel/SubPanelDefinitions.php';
+    $panelsdef = new SubPanelDefinitions($focus, '');
+    $loadTabSubpanelDef = $panelsdef->load_subpanel(strtolower($tabModule.'s'), false, false, '', '');
+    $tabSubpanelDefs = $loadTabSubpanelDef->panel_definition['list_fields'];
+
+    $fields_def = get_fields_defs($tabSubpanelDefs, $tabModule);
+
+    $focus->load_relationship(strtolower($tabModule.'s'));
+
+    $recordIDs = $focus->{strtolower($tabModule.'s')}->get();
+
+    $html .= '<script>let fields_def = '.json_encode($fields_def).'</script>';
+
     if ($view == 'EditView') {
 
-        $view = 'QuickCreate';
-
-        $arr = array();
-
-
-        require_once 'include/SubPanel/SubPanelDefinitions.php';
-        $panelsdef = new SubPanelDefinitions($focus, '');
-        $loadContactSubpanelDef = $panelsdef->load_subpanel('contacts', false, false, '', '');
-        $contactSubpanelDefs = $loadContactSubpanelDef->panel_definition['list_fields'];
-        $contactsLinkedBean = $focus->get_linked_beans('contacts', 'Contact');
-        $contactFieldDef = $contactsLinkedBean[0]->field_name_map;
-        foreach($contactFieldDef as $key => $value){
-            if(!empty($contactSubpanelDefs[$key])){
-                foreach($contactsLinkedBean as $mKey => $mValue){
-                    $GLOBALS['log']->fatal('log ' . $key, $mValue->$key);
-                    $GLOBALS['log']->fatal('log ' . $value, $value);
-                }
-            }
-        }
-        $contacts = json_encode($contactsLinkedBean);
         if (file_exists('custom/modules/Accounts/js/customTab.js')) {
             $html .= '<script src="custom/modules/Accounts/js/customTab.js"></script>';
         }
 
-        $arr[0] = array('name' => 'Test', 'LBL_NAME' => 'Name',  'email' => 'test@test.com');
-        $arr[1] = array('name' => 'Test1', 'email' => 'test1@test.com');
-
         $html .= "<table border='0' cellspacing='4' id='contact'></table>";
+        $html .= "<input type='hidden' name='totalCount' id='totalCount' value=''>";
 
-        foreach($arr as $val){
-            $contacts = json_encode($val);
-            $html .= "<script>
-                insertContacts(".$contacts.");
-            </script>";
+        if(count($recordIDs) != 0) {
+            foreach($recordIDs as $recordID){
+                $bean = BeanFactory::newBean($tabModule.'s');
+                $bean->retrieve($recordID, false);
+                $bean = json_encode($bean->toArray());
+                $html .= "<script>insert".$tabModule.'s'."(".$bean.");</script>";
+            }
+        } else {
+            $html .= "<script>insert".$tabModule.'s'."(".$bean.");</script>";
         }
+    } else if($view == 'DetailView'){
+        $no = 1;
+        $html .= "<table border='0' width='100%' cellpadding='0' cellspacing='0'>";
+        $html .= "<tr><td colspan='9' nowrap='nowrap'><br></td></tr>";
+        $html .= '<tr>';
+        $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">No.</td>';
+        foreach($fields_def as $key => $field){
+            $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$field['label'].'</td>';
+        }
+        $html .= '</tr>';
+        foreach($recordIDs as $recordID){
+            $bean = BeanFactory::newBean($tabModule.'s');
+            $bean->retrieve($recordID, false);
+            $html .= '<tr>';
+            $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$no.'</td>';
+            foreach($tabSubpanelDefs as $key => $value){
+                $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$bean->$key.'</td>';
+            }
+            $html .= '</tr>';
+            $no++;
+        }
+        $html .= "</table>";
     }
     return $html;
+}
+
+function get_fields_defs($tabSubpanelDefs, $tabModule){
+
+    $dummyBean = new $tabModule();
+
+    $fields_list = array();
+    $i = 0;
+    
+    foreach($tabSubpanelDefs as $key => $value){
+        if(!empty($dummyBean->field_defs[$key]['name'])){
+            $fields_list[$i]['name'] = $dummyBean->field_defs[$key]['name'];
+            $fields_list[$i]['type'] = $dummyBean->field_defs[$key]['type'];
+            $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
+            $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
+            $i++;
+        }
+    }
+
+    return $fields_list;
 }

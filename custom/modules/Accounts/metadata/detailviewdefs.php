@@ -91,25 +91,21 @@ array(
         array(
           'newTab' => true,
           'panelDefault' => 'expanded',
-          'tabFunction' => 'showTab();',
         ),
         'LBL_PANEL_ADVANCED' =>
         array(
           'newTab' => true,
           'panelDefault' => 'expanded',
-          'tabFunction' => 'showTab();',
         ),
         'LBL_PANEL_ASSIGNMENT' =>
         array(
           'newTab' => true,
           'panelDefault' => 'expanded',
-          'tabFunction' => 'showTab();',
         ),
         'LBL_CONTACTS_PANEL' =>
         array(
           'newTab' => true,
           'panelDefault' => 'expanded',
-          'tabFunction' => 'showTab(1);',
         ),
       ),
     ),
@@ -264,7 +260,9 @@ array(
         ),
       ),
       'LBL_CONTACTS_PANEL' => array(
-        
+        0 => array(
+          'name' => 'custom_account_contacts'
+        )
       ),
     ),
   ),

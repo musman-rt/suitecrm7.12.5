@@ -299,6 +299,7 @@ class EditView
         }
         if (!$this->focus) {
             $bean = $beanList[$this->module];
+            $GLOBALS['log']->fatal(print_r($bean, 1));
             require_once($beanFiles[$bean]);
             $obj = new $bean();
             $this->focus = $obj;
