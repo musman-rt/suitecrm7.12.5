@@ -59,59 +59,67 @@ class CustomAccount extends Account {
     }
 
     public function save($check_notify = false) {
-        $tabModule = $GLOBALS['sugar_config']['tabOptions']['modules'][$this->module_name];
-
-        $this->save_contact($_POST, $this, strtolower($tabModule.'_'));
-        return parent::save($check_notify);
-
+        $tabModule = $this->return_tab_settings();
+        $return_id =  parent::save($check_notify);
+        $this->save_bean($_POST, $this, strtolower($tabModule[2].'_'), $return_id, $tabModule);
+        return $return_id;
     }
 
-    public function save_contact($records, $parent, $type){
-        $tabModule = $GLOBALS['sugar_config']['tabOptions']['modules'][$this->module_name];
-
+    public function save_bean($records, $parent, $type, $return_id, $tabModule){
         $totalCount = $records['totalCount'];
         for ($i = 0; $i < $totalCount; ++$i) {
             $postData = null;
             if (isset($records[$type . 'deleted'][$i])) {
                 $postData = $records[$type . 'deleted'][$i];
             } else {
-                LoggerManager::getLogger()->warn($tabModule . ' deleted field is not set in requested POST data at key: ' . $type . '['. $i .']');
+                LoggerManager::getLogger()->warn($tabModule[2] . ' deleted field is not set in requested POST data at key: ' . $type . '['. $i .']');
             }
 
             if ($postData == 1) {
-                $this->bean_deleted($records[$type . 'id'][$i], $tabModule);
+                $this->bean_deleted($records[$type . 'id'][$i], $tabModule[1]);
             } else {
 
-                $dummyBean = new $tabModule();
+                $dummyBean = new $tabModule[2]();
 
                 if (!isset($records[$type . 'id'][$i])) {
-                    $contactId = null;
+                    $beanId = null;
                 } else {
-                    $contactId = $records[$type . 'id'][$i];
+                    $beanId = $records[$type . 'id'][$i];
                 }
 
-                $contact = BeanFactory::getBean($tabModule.'s', $contactId);
-                if (!$contact) {
-                    $contact = BeanFactory::newBean($tabModule.'s');
-                }
+                $dummyBean->retrieve($beanId);
 
                 foreach ($dummyBean->field_defs as $field_def) {
                     $field_name = $field_def['name'];
                     if (isset($records[$type . $field_name][$i])) {
-                        $contact->$field_name = $records[$type . $field_name][$i];
+                        $dummyBean->$field_name = $records[$type . $field_name][$i];
                     }
                 }
 
-                $contact->save();
+                $dummyBean->account_id = $return_id;
+                $dummyBean->save();
             }
         }
     }
 
     public function bean_deleted($id, $tabModule)
     {
-        $bean = BeanFactory::newBean($tabModule.'s');
-        $bean->retrieve($id, false);
-        $GLOBALS['log']->fatal(print_r($bean, 1));
-        $bean->mark_deleted($bean->id);
+        if($id == 0){
+            return;
+        }
+        $this->load_relationship(strtolower($tabModule));
+        $this->{strtolower($tabModule)}->delete($this, $id);
+    }
+
+    public function return_tab_settings(){
+        $admin = new Administration();
+        $admin->retrieveSettings();
+    
+        $settings = html_entity_decode($admin->settings['tabOptions_settings']);
+        $settings = json_decode($settings, true);
+    
+        $tabModule = $settings[$this->module_name];
+
+        return $tabModule;
     }
 }

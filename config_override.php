@@ -37,5 +37,16 @@ $sugar_config['addAjaxBannedModules'][32] = 'Contacts';
 $sugar_config['addAjaxBannedModules'][33] = 'Accounts';
 $sugar_config['addAjaxBannedModules'][34] = 'Leads';
 $sugar_config['tabOptions']['enable'] = 'Yes';
-$sugar_config['tabOptions']['modules'] = array('Accounts' => 'Contact');
+$sugar_config['tabOptions']['modules']['Accounts'] = 'Contact';
+$sugar_config['http_referer']['list'][0] = 'localhost';
+$sugar_config['http_referer']['actions'][0] = 'index';
+$sugar_config['http_referer']['actions'][1] = 'ListView';
+$sugar_config['http_referer']['actions'][2] = 'DetailView';
+$sugar_config['http_referer']['actions'][3] = 'EditView';
+$sugar_config['http_referer']['actions'][4] = 'oauth';
+$sugar_config['http_referer']['actions'][5] = 'authorize';
+$sugar_config['http_referer']['actions'][6] = 'Authenticate';
+$sugar_config['http_referer']['actions'][7] = 'Login';
+$sugar_config['http_referer']['actions'][8] = 'SupportPortal';
+$sugar_config['http_referer']['actions'][9] = 'tab_settings';
 /***CONFIGURATOR***/

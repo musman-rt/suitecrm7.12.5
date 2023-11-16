@@ -25,21 +25,30 @@
 
 function custom_account_contacts($focus, $field, $value, $view)
 {
-    global $sugar_config;
-    $tabModule = $sugar_config['tabOptions']['modules'][$focus->module_name];
+    $admin = new Administration();
+    $admin->retrieveSettings();
+
+    $settings = html_entity_decode($admin->settings['tabOptions_settings']);
+    $settings = json_decode($settings, true);
+
+    $tabModule = $settings[$focus->module_name];
 
     $html = '';
 
+    if($settings['ENABLE'] == 'no'){
+        return;
+    }
+
     require_once 'include/SubPanel/SubPanelDefinitions.php';
     $panelsdef = new SubPanelDefinitions($focus, '');
-    $loadTabSubpanelDef = $panelsdef->load_subpanel(strtolower($tabModule.'s'), false, false, '', '');
+    $loadTabSubpanelDef = $panelsdef->load_subpanel(strtolower($tabModule[1]), false, false, '', '');
     $tabSubpanelDefs = $loadTabSubpanelDef->panel_definition['list_fields'];
 
-    $fields_def = get_fields_defs($tabSubpanelDefs, $tabModule);
+    $fields_def = get_fields_defs($tabSubpanelDefs, $tabModule[2]);
 
-    $focus->load_relationship(strtolower($tabModule.'s'));
+    $focus->load_relationship(strtolower($tabModule[1]));
 
-    $recordIDs = $focus->{strtolower($tabModule.'s')}->get();
+    $recordIDs = $focus->{strtolower($tabModule[1])}->get();
 
     $html .= '<script>let fields_def = '.json_encode($fields_def).'</script>';
 
@@ -54,31 +63,31 @@ function custom_account_contacts($focus, $field, $value, $view)
 
         if(count($recordIDs) != 0) {
             foreach($recordIDs as $recordID){
-                $bean = BeanFactory::newBean($tabModule.'s');
+                $bean = BeanFactory::newBean($tabModule[1]);
                 $bean->retrieve($recordID, false);
                 $bean = json_encode($bean->toArray());
-                $html .= "<script>insert".$tabModule.'s'."(".$bean.");</script>";
+                $html .= "<script>insert".$tabModule[1]."(".$bean.");</script>";
             }
         } else {
-            $html .= "<script>insert".$tabModule.'s'."(".$bean.");</script>";
+            $html .= "<script>insert".$tabModule[1]."(".$bean.");</script>";
         }
     } else if($view == 'DetailView'){
         $no = 1;
         $html .= "<table border='0' width='100%' cellpadding='0' cellspacing='0'>";
-        $html .= "<tr><td colspan='9' nowrap='nowrap'><br></td></tr>";
-        $html .= '<tr>';
+        $html .= '<tr class="fieldsLabelTR">';
         $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">No.</td>';
         foreach($fields_def as $key => $field){
             $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$field['label'].'</td>';
         }
         $html .= '</tr>';
         foreach($recordIDs as $recordID){
-            $bean = BeanFactory::newBean($tabModule.'s');
+            $bean = BeanFactory::newBean($tabModule[1]);
             $bean->retrieve($recordID, false);
-            $html .= '<tr>';
+            $html .= '<tr class="listContacts">';
             $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$no.'</td>';
-            foreach($tabSubpanelDefs as $key => $value){
-                $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$bean->$key.'</td>';
+            foreach($fields_def as $key => $value){
+                $fieldName = $value['name'];
+                $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$bean->$fieldName.'</td>';
             }
             $html .= '</tr>';
             $no++;
@@ -101,6 +110,7 @@ function get_fields_defs($tabSubpanelDefs, $tabModule){
             $fields_list[$i]['type'] = $dummyBean->field_defs[$key]['type'];
             $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
             $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
+            $fields_list[$i]['required'] = $dummyBean->field_defs[$key]['required'];
             $i++;
         }
     }

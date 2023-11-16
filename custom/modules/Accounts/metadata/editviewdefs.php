@@ -51,6 +51,9 @@ array(
           0 => 'SAVE',
           1 => 'CANCEL',
         ),
+        'hidden' => array(
+          0 => '<input type="hidden" id="myTest123" name="myTest123" value="{$TABENABLE}">',
+        ),
       ),
       'maxColumns' => '2',
       'widths' =>
@@ -92,8 +95,9 @@ array(
         ),
         'LBL_CONTACTS_PANEL' =>
         array(
-          'newTab' => true,
+          'newTab' => $TABENABLE == 1 ? 'true' : 'false',
           'panelDefault' => 'expanded',
+          'panelClass' => '{if $TABENABLE != 1}tab-hidden-class{/if}'
         ),
       ),
     ),

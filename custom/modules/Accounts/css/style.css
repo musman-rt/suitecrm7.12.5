@@ -1,0 +1,47 @@
+[field=custom_account_contacts] {
+    display: block;
+    width: 100%;
+}
+
+[data-field=custom_account_contacts] .col-1-label, [data-field=custom_account_contacts] .label {
+    display: none;
+}
+
+tr.fieldsLabelTR td {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 10px 0px 10px 0px !important;
+}
+
+tr.listContacts td {
+    padding: 10px 0px 10px 0px !important;
+    font-size: 14px;
+}
+
+span#custom_account_contacts_span {
+    width: 100%;
+}
+
+table#contact {
+    width: 100%;
+}
+
+thead#contact_head {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+tr#contact_head td {
+    padding: 10px 0px 10px 0px;
+}
+
+button.contact_delete .suitepicon.suitepicon-action-clear {
+    display: block;
+}
+
+tfoot#contact_tfoot tr td {
+    padding: 25px 0px 0px 0px;
+}
+.tab-hidden-class {
+    display: none !important;
+}

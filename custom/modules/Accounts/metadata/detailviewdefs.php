@@ -58,6 +58,9 @@ array(
             'customCode' => '<input type="button" class="button" onClick="showPopup();" value="{$APP.LBL_PRINT_AS_PDF}">',
           ),
         ),
+        'hidden' => array(
+          0 => '<input type="hidden" id="myTest" name="myTest" value="{$TABENABLE}">',
+        ),
       ),
       'maxColumns' => '2',
       'widths' =>
@@ -104,8 +107,9 @@ array(
         ),
         'LBL_CONTACTS_PANEL' =>
         array(
-          'newTab' => true,
+          'newTab' => $TABENABLE == 1 ? 'true' : 'false',
           'panelDefault' => 'expanded',
+          'panelClass' => '{if $TABENABLE != 1}tab-hidden-class{/if}'
         ),
       ),
     ),

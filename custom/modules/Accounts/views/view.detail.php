@@ -54,6 +54,17 @@ class CustomAccountsViewDetail extends AccountsViewDetail
      */
     public function display()
     {
+        $admin = new Administration();
+        $admin->retrieveSettings();
+    
+        $settings = html_entity_decode($admin->settings['tabOptions_settings']);
+        $settings = json_decode($settings, true);
+    
+        $tabModule = $settings[$this->module];
+        $enable = $settings['ENABLE'] == 'yes' ? true : false;
+
+        $this->ss->assign('TABENABLE', $enable);
+        echo '<link rel="stylesheet" type="text/css" href="custom/modules/Accounts/css/style.css" />';   
         parent::display();
     }
 }
