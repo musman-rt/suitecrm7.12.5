@@ -1,5 +1,5 @@
 <?php
-// created: 2023-11-14 17:22:41
+// created: 2023-11-20 19:56:50
 $subpanel_layout['list_fields'] = array (
   'name' => 
   array (
@@ -67,6 +67,25 @@ $subpanel_layout['list_fields'] = array (
     'widget_class' => 'SubPanelDetailViewLink',
     'target_module' => 'Users',
     'target_record_key' => 'assigned_user_id',
+  ),
+  'report_to_name' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'vname' => 'LBL_REPORTS_TO',
+    'id' => 'REPORTS_TO_ID',
+    'width' => '10%',
+    'default' => true,
+    'widget_class' => 'SubPanelDetailViewLink',
+    'target_module' => 'Contacts',
+    'target_record_key' => 'reports_to_id',
+  ),
+  'lead_source' => 
+  array (
+    'type' => 'enum',
+    'vname' => 'LBL_LEAD_SOURCE',
+    'width' => '10%',
+    'default' => true,
   ),
   'first_name' => 
   array (

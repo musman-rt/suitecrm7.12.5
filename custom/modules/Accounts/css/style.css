@@ -45,3 +45,39 @@ tfoot#contact_tfoot tr td {
 .tab-hidden-class {
     display: none !important;
 }
+
+/*button.button.contact_assigned_user_name_button {
+    font-size: 10px;
+    padding: 0 10px 0 10px;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    right: 480px;
+}**/
+
+span.suitepicon.suitepicon-action-select {
+    display: block;
+}
+
+.editListBody {
+    height: 50px;
+}
+
+.relatetype {
+    display: flex;
+}
+
+span.suitepicon.suitepicon-action-clear {
+    display: block;
+}
+
+#typerelate .button {
+    font-size: 10px;
+    padding: 0 10px 0 10px;
+    margin: 0 2px 0 2px;
+}
+
+button.contact_delete {
+    font-size: 10px;
+    padding: 0 10px 0 10px;
+}

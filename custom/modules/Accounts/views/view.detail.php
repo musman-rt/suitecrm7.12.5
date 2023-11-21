@@ -64,7 +64,11 @@ class CustomAccountsViewDetail extends AccountsViewDetail
         $enable = $settings['ENABLE'] == 'yes' ? true : false;
 
         $this->ss->assign('TABENABLE', $enable);
-        echo '<link rel="stylesheet" type="text/css" href="custom/modules/Accounts/css/style.css" />';   
+        echo '<link rel="stylesheet" type="text/css" href="custom/modules/Accounts/css/style.css" />';
+        if($settings['ENABLE'] == 'yes'){
+            echo '<link rel="stylesheet" type="text/css" href="custom/modules/Accounts/css/cstmStyle.css" />';
+        }
+
         parent::display();
     }
 }

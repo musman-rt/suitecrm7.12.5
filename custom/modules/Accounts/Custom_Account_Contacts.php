@@ -50,49 +50,41 @@ function custom_account_contacts($focus, $field, $value, $view)
 
     $recordIDs = $focus->{strtolower($tabModule[1])}->get();
 
+    $smarty = new Sugar_Smarty();
+
     $html .= '<script>let fields_def = '.json_encode($fields_def).'</script>';
 
     if ($view == 'EditView') {
 
         if (file_exists('custom/modules/Accounts/js/customTab.js')) {
-            $html .= '<script src="custom/modules/Accounts/js/customTab.js"></script>';
+            $smarty->assign('FILE_FLAG', 1);
         }
 
-        $html .= "<table border='0' cellspacing='4' id='contact'></table>";
-        $html .= "<input type='hidden' name='totalCount' id='totalCount' value=''>";
+        $smarty->assign('TAB_MODULE', strtolower($tabModule[2]));
+
+        $html .= $smarty->fetch('custom/modules/Accounts/tpls/data_list.tpl');
 
         if(count($recordIDs) != 0) {
-            foreach($recordIDs as $recordID){
+            foreach($recordIDs as $key => $recordID){
                 $bean = BeanFactory::newBean($tabModule[1]);
                 $bean->retrieve($recordID, false);
                 $bean = json_encode($bean->toArray());
-                $html .= "<script>insert".$tabModule[1]."(".$bean.");</script>";
+                $html .= "<script>insertRows(".$bean.");</script>";
             }
         } else {
-            $html .= "<script>insert".$tabModule[1]."(".$bean.");</script>";
+            $html .= "<script>insertRows(".$bean.");</script>";
         }
     } else if($view == 'DetailView'){
-        $no = 1;
-        $html .= "<table border='0' width='100%' cellpadding='0' cellspacing='0'>";
-        $html .= '<tr class="fieldsLabelTR">';
-        $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">No.</td>';
-        foreach($fields_def as $key => $field){
-            $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$field['label'].'</td>';
-        }
-        $html .= '</tr>';
-        foreach($recordIDs as $recordID){
+        $smarty->assign('CUSTOM_FIELDS_DEF', $fields_def);
+        $listHtml = '';
+        foreach ($recordIDs as $recordID) {
             $bean = BeanFactory::newBean($tabModule[1]);
             $bean->retrieve($recordID, false);
-            $html .= '<tr class="listContacts">';
-            $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$no.'</td>';
-            foreach($fields_def as $key => $value){
-                $fieldName = $value['name'];
-                $html .= '<td class="tabDetailViewDL" colspan="9" style="text-align: left;padding:2px;">'.$bean->$fieldName.'</td>';
-            }
-            $html .= '</tr>';
-            $no++;
+            $smarty->assign('TAB_BEAN', $bean->toArray());
+            $listHtml .= $smarty->fetch('custom/modules/Accounts/tpls/data_list.tpl');
         }
-        $html .= "</table>";
+        $smarty->assign('LIST_HTML', $listHtml);
+        $html .= $smarty->fetch('custom/modules/Accounts/tpls/tab_list.tpl');
     }
     return $html;
 }
@@ -111,6 +103,14 @@ function get_fields_defs($tabSubpanelDefs, $tabModule){
             $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
             $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
             $fields_list[$i]['required'] = $dummyBean->field_defs[$key]['required'];
+            if($dummyBean->field_defs[$key]['type'] == 'relate'){
+                $fields_list[$i]['module'] = $dummyBean->field_defs[$key]['module'];
+                $fields_list[$i]['id_name'] = $dummyBean->field_defs[$key]['id_name'];
+                $fields_list[$i]['rname'] = $dummyBean->field_defs[$key]['rname'];
+            }
+            if($dummyBean->field_defs[$key]['type'] == 'enum'){
+                $fields_list[$i]['options'] = $dummyBean->field_defs[$key]['options'];
+            }
             $i++;
         }
     }

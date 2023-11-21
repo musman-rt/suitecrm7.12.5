@@ -1,12 +1,10 @@
-let salutation_dom = Object.keys(SUGAR.language.languages['app_list_strings']['salutation_dom']);
-
-let contactNo = 0;
+let rowNo = 0;
 let totalCount = 1;
-function insertContacts(bean){
-    
+
+function insertRows(bean){
     tableid = "contact";
 
-    insertContactHeader(tableid);
+    insertRowHeader(tableid);
 
     if (document.getElementById(tableid + '_head') !== null) {
         document.getElementById(tableid + '_head').style.display = "";
@@ -15,27 +13,28 @@ function insertContacts(bean){
     document.getElementById('totalCount').value = totalCount;
 
     tablebody = document.createElement("tbody");
-    tablebody.id = "contactBody" + contactNo;
-    tablebody.classList.add('editListContacts');
+    tablebody.id = tableid+"Body" + rowNo;
+    tablebody.classList.add('editListBody');
     document.getElementById(tableid).appendChild(tablebody);
 
     let x = tablebody.insertRow(-1);
-    x.id = 'contact_row' + contactNo;
+    x.id = tableid+'_row' + rowNo + ' each_row';
   
     let i = 0;
 
     fields_def.forEach(function(element){
         if(element.label !== 'undefined'){
             let a = x.insertCell(i);
-            a.innerHTML = getFieldsByType(element, contactNo, 'contact');
+            a.id = 'type' + element.type;
+            a.innerHTML = getFieldsByType(element, rowNo, tableid);
             if(element.label !== 'undefined'){
                 if(element.required !== 'undefined' && element.required == true){
-                    addToValidate('EditView', 'contact_'+element.name+contactNo, element.type, true, element.label + ' is required');
+                    addToValidate('EditView', tableid+'_'+element.name+rowNo, element.type, true, element.label + ' is required');
                 }
             }
             if(i == 7){
                 let b = x.insertCell(i+1);
-                b.innerHTML = "<input type='hidden' name='contact_id[]' id='id" + contactNo + "' value='0'><input type='hidden' name='contact_deleted[]' id='contact_deleted" + contactNo + "' value='0'><button type='button' id='contact_delete" + contactNo + "' class='button contact_delete' value='' tabindex='116' onclick='markContactDeleted(" + contactNo + ")'><span class=\"suitepicon suitepicon-action-clear\"></span></button>";
+                b.innerHTML = "<input type='hidden' name='"+tableid+"_id[]' id='id" + rowNo + "' value='0'><input type='hidden' name='"+tableid+"_deleted[]' id='"+tableid+"_deleted" + rowNo + "' value='0'><button type='button' id='"+tableid+"_delete" + rowNo + "' class='button "+tableid+"_delete' value='' tabindex='116' onclick='markRowDeleted(" + rowNo + ")'><span class=\"suitepicon suitepicon-action-clear\"></span></button>";
             }
         }
         i++;
@@ -43,36 +42,34 @@ function insertContacts(bean){
 
     for(let c in bean){
         if(c == 'id'){
-           if(document.getElementById(c + contactNo) !== null){
-            console.log(c + ' ++ ' + bean[c]);
-            document.getElementById(c + contactNo).value = bean[c];
+           if(document.getElementById(c + rowNo) !== null){
+            document.getElementById(c + rowNo).value = bean[c];
            }
         }
-        if(document.getElementById('contact_'+c + contactNo) !== null){
-            console.log(c + ' ++ ' + bean[c]);
-            document.getElementById('contact_'+c + contactNo).value = bean[c];
+        if(document.getElementById(tableid+'_'+c + rowNo) !== null){
+            document.getElementById(tableid+'_'+c + rowNo).value = bean[c];
         }
     }
 
-    if(contactNo == 0){
-        insertContactFooter(tableid, contactNo);
+    if(rowNo == 0){
+        insertRowFooter(tableid, rowNo);
     }
 
-    contactNo++;
+    rowNo++;
     totalCount++;
 
-    return contactNo - 1;
+    return rowNo - 1;
 
 }
 
- function insertContactHeader(tableid){
+ function insertRowHeader(tableid){
     tablehead = document.createElement("thead");
     tablehead.id = tableid +"_head";
     tablehead.style.display="none";
     document.getElementById(tableid).appendChild(tablehead);
   
     var x=tablehead.insertRow(-1);
-    x.id='contact_head';
+    x.id=tableid+'_head';
   
     let i = 0;
 
@@ -90,7 +87,7 @@ function insertContacts(bean){
     });
   }
 
-function insertContactFooter(tableid, contactNo){
+function insertRowFooter(tableid, rowNo){
     tablefooter = document.createElement("tfoot");
     tablefooter.id = tableid +"_tfoot";
     document.getElementById(tableid).appendChild(tablefooter);
@@ -98,50 +95,54 @@ function insertContactFooter(tableid, contactNo){
     var footer_cell = footer_row.insertCell(0);
     footer_cell.scope="row";
     footer_cell.colSpan="20";
-    footer_cell.innerHTML="<input type='button' tabindex='116' class='button add_contact' value='Add Contact' id='"+tableid+""+contactNo+"addContact' onclick='insertContacts(\""+tableid+""+contactNo+"\",\""+contactNo+"\")' />";
+    footer_cell.innerHTML="<input type='button' tabindex='116' class='button add_row' value='Add Record' id='"+tableid+""+rowNo+"addRow' onclick='insertRows(\""+tableid+""+rowNo+"\",\""+rowNo+"\")' />";
 }
 
-function markContactDeleted(ln) {
-    document.getElementById('contactBody' + ln).style.display = 'none';
-    document.getElementById('contact_deleted' + ln).value = '1';
-    document.getElementById('contact_deleted' + ln).onclick = '';
+function markRowDeleted(ln) {
+    let tableid = document.getElementById('tabmodule').value;
+    document.getElementById(tableid+'Body' + ln).style.display = 'none';
+    document.getElementById(tableid+'_deleted' + ln).value = '1';
+    document.getElementById(tableid+'_deleted' + ln).onclick = '';
     fields_def.forEach(function(element){
         if(element.label !== 'undefined'){
             if(element.required !== 'undefined' && element.required == true){
-                if(checkValidate('EditView','contact_'+element.name +ln)){
-                    removeFromValidate('EditView','contact_'+element.name+ln);
+                if(checkValidate('EditView',tableid+'_'+element.name +ln)){
+                    removeFromValidate('EditView',tableid+'_'+element.name+ln);
                 }
             }
         }
     });
 }
 
-function getFieldsByType(element, contactNo, type){
+function getFieldsByType(element, rowNo, type){
     switch (element.type) {
         case 'varchar':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+contactNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
 
         case 'enum':
-            html = "<select name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+contactNo + "'>'"+makeDropDown()+"'</selec>";
+            html = "<select name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'>'"+makeDropDown(element.options)+"'</selec>";
         return html;
 
         case 'name':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+contactNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
 
         case 'phone':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+contactNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
         
         case 'relate':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+contactNo + "'  value='' title='' >";
+            let popup = 'open_popup("'+element.module+'", 600, 400, "", true, false, {"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{"id":"'+ type+'_'+element.id_name+rowNo+'","'+element.rname+'":"'+type+'_'+element.name+rowNo+'"}}, "single", true)';
+            let clear = 'SUGAR.clearRelateField(this.form, "'+ type+'_'+element.name+rowNo+'", "'+ type+'_'+element.id_name+rowNo+'")';
+            html = "<div class='relatetype'><input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' ><input type='hidden' name='"+ type+'_'+element.id_name+"[]' id='"+ type+'_'+element.id_name+rowNo+"' value=''><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+popup+"'><span class=\"suitepicon suitepicon-action-select\"></span></button><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+clear+"'><span class=\"suitepicon suitepicon-action-clear\"></span></button></div>";
         return html;
         
     }
 }
 
-function makeDropDown(){
+function makeDropDown(options){
+    let salutation_dom = Object.keys(SUGAR.language.languages['app_list_strings'][options]);
     let html = "";
     for(let i = 0; i < salutation_dom.length; i++){
         html += '<option value='+salutation_dom[i]+'>'+salutation_dom[i]+'</option>'
@@ -161,13 +162,14 @@ function check_form(formname){
 
 function customAddToValidate(){
     let val = document.getElementById('totalCount').value;
+    let tableid = document.getElementById('tabmodule').value;
     for(i = 0; i < val; i++){
         val = i;
     }
     fields_def.forEach(function(element){
         if(element.label !== 'undefined'){
             if(element.required !== 'undefined' && element.required == true){
-                addToValidate('EditView', 'contact_'+element.name+val, element.type, true, element.label + ' is required');
+                addToValidate('EditView', tableid+'_'+element.name+val, element.type, true, element.label + ' is required');
             }
         }
     });

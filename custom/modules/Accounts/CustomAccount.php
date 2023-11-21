@@ -104,7 +104,7 @@ class CustomAccount extends Account {
 
     public function bean_deleted($id, $tabModule)
     {
-        if($id == 0){
+        if($id == "0"){
             return;
         }
         $this->load_relationship(strtolower($tabModule));

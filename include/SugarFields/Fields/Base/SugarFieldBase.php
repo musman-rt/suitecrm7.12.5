@@ -468,7 +468,7 @@ class SugarFieldBase
             foreach ($displayParams['field'] as $key => $value) {
                 $plusField .= ' ' . $key . '="' . $value . '"';//bug 27381
             }
-            $displayParams['field'] = $plusField;
+            $displayParams['field'] = $$displayParams['field'];
         }
         //for adding attributes to the button
         if (!empty($displayParams['button'])) {
