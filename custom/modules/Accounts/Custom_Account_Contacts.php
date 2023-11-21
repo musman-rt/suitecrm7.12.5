@@ -35,7 +35,7 @@ function custom_account_contacts($focus, $field, $value, $view)
 
     $html = '';
 
-    if($settings['ENABLE'] == 'no'){
+    if ($settings['ENABLE'] == 'no') {
         return;
     }
 
@@ -52,7 +52,7 @@ function custom_account_contacts($focus, $field, $value, $view)
 
     $smarty = new Sugar_Smarty();
 
-    $html .= '<script>let fields_def = '.json_encode($fields_def).'</script>';
+    $html .= '<script>let fields_def = ' . json_encode($fields_def) . '</script>';
 
     if ($view == 'EditView') {
 
@@ -64,17 +64,30 @@ function custom_account_contacts($focus, $field, $value, $view)
 
         $html .= $smarty->fetch('custom/modules/Accounts/tpls/data_list.tpl');
 
-        if(count($recordIDs) != 0) {
-            foreach($recordIDs as $key => $recordID){
+        if (count($recordIDs) != 0) {
+            foreach ($recordIDs as $key => $recordID) {
                 $bean = BeanFactory::newBean($tabModule[1]);
                 $bean->retrieve($recordID, false);
-                $bean = json_encode($bean->toArray());
-                $html .= "<script>insertRows(".$bean.");</script>";
+                // $bean = json_encode($bean->toArray());
+                $bean = $bean->toArray();
+
+                $fieldHtml = "";
+                $fieldHtml .= '<table><tr>';
+                foreach ($fields_def as $value) {
+                    $fieldHtmlTd = getTabViewHtml($tabModule[1], $value['name'], $bean['id'], $key, $tabModule[2]);
+                    $fieldHtml .= '<td>' . $fieldHtmlTd . '</td>';
+                }
+
+                $fieldHtml .= '</tr></table>';
+
+                $html .= $fieldHtml;
+
+                $html .= "<script>insertRows(" . $bean . ");</script>";
             }
         } else {
-            $html .= "<script>insertRows(".$bean.");</script>";
+            $html .= "<script>insertRows(" . $bean . ");</script>";
         }
-    } else if($view == 'DetailView'){
+    } else if ($view == 'DetailView') {
         $smarty->assign('CUSTOM_FIELDS_DEF', $fields_def);
         $listHtml = '';
         foreach ($recordIDs as $recordID) {
@@ -89,26 +102,27 @@ function custom_account_contacts($focus, $field, $value, $view)
     return $html;
 }
 
-function get_fields_defs($tabSubpanelDefs, $tabModule){
+function get_fields_defs($tabSubpanelDefs, $tabModule)
+{
 
     $dummyBean = new $tabModule();
 
     $fields_list = array();
     $i = 0;
-    
-    foreach($tabSubpanelDefs as $key => $value){
-        if(!empty($dummyBean->field_defs[$key]['name'])){
+
+    foreach ($tabSubpanelDefs as $key => $value) {
+        if (!empty($dummyBean->field_defs[$key]['name'])) {
             $fields_list[$i]['name'] = $dummyBean->field_defs[$key]['name'];
             $fields_list[$i]['type'] = $dummyBean->field_defs[$key]['type'];
             $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
             $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
             $fields_list[$i]['required'] = $dummyBean->field_defs[$key]['required'];
-            if($dummyBean->field_defs[$key]['type'] == 'relate'){
+            if ($dummyBean->field_defs[$key]['type'] == 'relate') {
                 $fields_list[$i]['module'] = $dummyBean->field_defs[$key]['module'];
                 $fields_list[$i]['id_name'] = $dummyBean->field_defs[$key]['id_name'];
                 $fields_list[$i]['rname'] = $dummyBean->field_defs[$key]['rname'];
             }
-            if($dummyBean->field_defs[$key]['type'] == 'enum'){
+            if ($dummyBean->field_defs[$key]['type'] == 'enum') {
                 $fields_list[$i]['options'] = $dummyBean->field_defs[$key]['options'];
             }
             $i++;
@@ -116,4 +130,12 @@ function get_fields_defs($tabSubpanelDefs, $tabModule){
     }
 
     return $fields_list;
+}
+
+function getTabViewHtml($module, $fieldname, $id, $key, $tabModule)
+{
+    include_once("custom/include/InlineEditing/InlineEditing.php");
+    $html = json_decode(getEditFieldHTML($module, $fieldname, $fieldname, 'EditView', $id, '', '', $tabModule));
+    $html = str_replace("id='".strtolower($tabModule).'_'.$fieldname."[]'", "id='".strtolower($tabModule)."_".$fieldname.$key."'", $html);
+    return $html;
 }
