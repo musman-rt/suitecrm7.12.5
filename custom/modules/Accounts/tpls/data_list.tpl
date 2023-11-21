@@ -2,6 +2,9 @@
 
     {literal}
         <script src="custom/modules/Accounts/js/customTab.js"></script>
+        <script>
+            if(typeof sqs_objects == 'undefined'){var sqs_objects = new Array;}
+        </script>
     {/literal}
 
     <table border='0' cellspacing='4' id='{$TAB_MODULE}'></table>
