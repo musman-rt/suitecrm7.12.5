@@ -26,7 +26,8 @@ function insertRows(bean){
         if(element.label !== 'undefined'){
             let a = x.insertCell(i);
             a.id = 'type' + element.type;
-            a.innerHTML = getFieldsByType(element, rowNo, tableid);
+            // a.innerHTML = getFieldsByType(element, rowNo, tableid);
+            a.innerHTML = loadFieldHTML(element, rowNo, tableid);
             if(element.label !== 'undefined'){
                 if(element.required !== 'undefined' && element.required == true){
                     addToValidate('EditView', tableid+'_'+element.name+rowNo, element.type, true, element.label + ' is required');
@@ -173,4 +174,29 @@ function customAddToValidate(){
             }
         }
     });
+}
+
+function loadFieldHTML(element, rowNo, tableid) {
+    $.ajaxSetup({ async: false });
+    var result = $.getJSON("index.php", {
+        module: "Accounts",
+        action: "customSugarFields",
+        field: element.name,
+        current_module: 'Contacts',
+        id: "",
+        view: 'EditView',
+        to_pdf: true,
+        row_no: rowNo,
+        table_id: tableid
+    });
+    $.ajaxSetup({ async: true });
+    if (result.responseText) {
+        try {
+            return JSON.parse(result.responseText);
+        } catch (e) {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }

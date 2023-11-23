@@ -258,24 +258,24 @@ function getEditFieldHTML($module, $fieldname, $aow_field, $view = 'EditView', $
         $fieldlist[$fieldlist[$fieldname]['id_name']]['value'] = $rel_value;
         $fieldlist[$fieldname]['value'] = $value;
         $fieldlist[$fieldname]['id_name'] = $aow_field;
-        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : 'contact_'.$aow_field."[]";
+        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : strtolower($tab_module).'_'.$aow_field."[]";
     } elseif (isset($fieldlist[$fieldname]['type']) && ($fieldlist[$fieldname]['type'] == 'datetimecombo' || $fieldlist[$fieldname]['type'] == 'datetime' || $fieldlist[$fieldname]['type'] == 'date')) {
         $value = $focus->convertField($value, $fieldlist[$fieldname]);
         if (!$value) {
             $value = date($timedate->get_date_time_format());
         }
-        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : 'contact_'.$aow_field."[]";
+        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : strtolower($tab_module).'_'.$aow_field."[]";
         $fieldlist[$fieldname]['value'] = $value;
     } elseif (isset($fieldlist[$fieldname]['type']) && ($fieldlist[$fieldname]['type'] == 'date')) {
         $value = $focus->convertField($value, $fieldlist[$fieldname]);
-        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : 'contact_'.$aow_field."[]";
+        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : strtolower($tab_module).'_'.$aow_field."[]";
         if (empty($value)) {
             $value = str_replace("%", "", date($date_format));
         }
         $fieldlist[$fieldname]['value'] = $value;
     } else {
         $fieldlist[$fieldname]['value'] = $value;
-        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : 'contact_'.$aow_field."[]";
+        $fieldlist[$fieldname]['name'] = $tab_module == '' ? $aow_field . '_display' : strtolower($tab_module).'_'.$aow_field."[]";
     }
 
     if ($fieldlist[$fieldname]['type'] == 'currency' && $view != 'EditView') {

@@ -68,24 +68,11 @@ function custom_account_contacts($focus, $field, $value, $view)
             foreach ($recordIDs as $key => $recordID) {
                 $bean = BeanFactory::newBean($tabModule[1]);
                 $bean->retrieve($recordID, false);
-                // $bean = json_encode($bean->toArray());
-                $bean = $bean->toArray();
-
-                $fieldHtml = "";
-                $fieldHtml .= '<table><tr>';
-                foreach ($fields_def as $value) {
-                    $fieldHtmlTd = getTabViewHtml($tabModule[1], $value['name'], $bean['id'], $key, $tabModule[2]);
-                    $fieldHtml .= '<td>' . $fieldHtmlTd . '</td>';
-                }
-
-                $fieldHtml .= '</tr></table>';
-
-                $html .= $fieldHtml;
-
-                // $html .= "<script>insertRows(" . $bean . ");</script>";
+                $bean = json_encode($bean->toArray());
+                $html .= "<script>insertRows(" . $bean . ");</script>";
             }
         } else {
-            // $html .= "<script>insertRows(" . $bean . ");</script>";
+            $html .= "<script>insertRows(" . $bean . ");</script>";
         }
     } else if ($view == 'DetailView') {
         $smarty->assign('CUSTOM_FIELDS_DEF', $fields_def);
