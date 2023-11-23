@@ -82,10 +82,10 @@ function custom_account_contacts($focus, $field, $value, $view)
 
                 $html .= $fieldHtml;
 
-                $html .= "<script>insertRows(" . $bean . ");</script>";
+                // $html .= "<script>insertRows(" . $bean . ");</script>";
             }
         } else {
-            $html .= "<script>insertRows(" . $bean . ");</script>";
+            // $html .= "<script>insertRows(" . $bean . ");</script>";
         }
     } else if ($view == 'DetailView') {
         $smarty->assign('CUSTOM_FIELDS_DEF', $fields_def);
@@ -136,6 +136,6 @@ function getTabViewHtml($module, $fieldname, $id, $key, $tabModule)
 {
     include_once("custom/include/InlineEditing/InlineEditing.php");
     $html = json_decode(getEditFieldHTML($module, $fieldname, $fieldname, 'EditView', $id, '', '', $tabModule));
-    $html = str_replace("id='".strtolower($tabModule).'_'.$fieldname."[]'", "id='".strtolower($tabModule)."_".$fieldname.$key."'", $html);
+    $html = str_replace("id='".strtolower($tabModule).'_'.$fieldname."[]'", "id='".strtolower($tabModule)."_".$fieldname.$key."'", trim($html));
     return $html;
 }
