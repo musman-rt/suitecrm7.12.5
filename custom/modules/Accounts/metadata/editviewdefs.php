@@ -57,7 +57,7 @@ array (
         ),
         'LBL_CONTACTS_PANEL' => 
         array (
-          'newTab' => true,
+          'newTab' => $TABENABLE == 1 ? 'true' : 'false',
           'panelDefault' => 'expanded',
           'panelClass' => '{if $TABENABLE != 1}tab-hidden-class{/if}'
         ),
