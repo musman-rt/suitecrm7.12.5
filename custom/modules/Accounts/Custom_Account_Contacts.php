@@ -44,7 +44,7 @@ function custom_account_contacts($focus, $field, $value, $view)
     $loadTabSubpanelDef = $panelsdef->load_subpanel(strtolower($tabModule[1]), false, false, '', '');
     $tabSubpanelDefs = $loadTabSubpanelDef->panel_definition['list_fields'];
 
-    $fields_def = get_fields_defs($tabSubpanelDefs, $tabModule[2]);
+    $fields_def = get_fields_defs($tabSubpanelDefs, $tabModule[2], $view);
 
     $focus->load_relationship(strtolower($tabModule[1]));
 
@@ -89,7 +89,7 @@ function custom_account_contacts($focus, $field, $value, $view)
     return $html;
 }
 
-function get_fields_defs($tabSubpanelDefs, $tabModule){
+function get_fields_defs($tabSubpanelDefs, $tabModule, $view){
 
     $dummyBean = new $tabModule();
 
@@ -97,12 +97,13 @@ function get_fields_defs($tabSubpanelDefs, $tabModule){
     $i = 0;
     
     foreach($tabSubpanelDefs as $key => $value){
-        if(!empty($dummyBean->field_defs[$key]['name'])){
+        if(!empty($dummyBean->field_defs[$key]['name']) && (!isset($dummyBean->field_defs[$key]['fields']) || $view == 'DetailView')){
             $fields_list[$i]['name'] = $dummyBean->field_defs[$key]['name'];
             $fields_list[$i]['type'] = $dummyBean->field_defs[$key]['type'];
             $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
             $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
             $fields_list[$i]['required'] = $dummyBean->field_defs[$key]['required'];
+            $fields_list[$i]['fields'] = $dummyBean->field_defs[$key]['fields'];
             if($dummyBean->field_defs[$key]['type'] == 'relate'){
                 $fields_list[$i]['module'] = $dummyBean->field_defs[$key]['module'];
                 $fields_list[$i]['id_name'] = $dummyBean->field_defs[$key]['id_name'];
