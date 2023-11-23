@@ -40,6 +40,8 @@ function insertRows(bean){
         i++;
     });
 
+    enableQS(true);
+
     for(let c in bean){
         if(c == 'id'){
            if(document.getElementById(c + rowNo) !== null){
@@ -117,30 +119,30 @@ function markRowDeleted(ln) {
 function getFieldsByType(element, rowNo, type){
     switch (element.type) {
         case 'varchar':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"["+rowNo+"]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
 
         case 'enum':
-            html = "<select name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'>'"+makeDropDown(element.options)+"'</selec>";
+            html = "<select name='"+type+'_'+element.name+"["+rowNo+"]' id='" + type+'_'+element.name+rowNo + "'>'"+makeDropDown(element.options)+"'</selec>";
         return html;
 
         case 'name':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"["+rowNo+"]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
 
         case 'phone':
-            html = "<input type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
+            html = "<input type='text' name='"+type+'_'+element.name+"["+rowNo+"]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' >";
         return html;
         
         case 'relate':
-            sqs_objects[type+'_'+element.name+"["+rowNo+"]"] = {
+            sqs_objects[type+'_'+element.name+'['+rowNo+']'] = {
                 "form": "EditView",
                 "method": "query",
                 "modules": [element.module],
                 "group": "or",
-                "field_list": ['id'],
-                "populate_list": [type+'_'+element.id_name+rowNo, type+'_'+element.name+rowNo],
-                "required_list": [type+'_'+element.id_name+rowNo],
+                "field_list": [element.rname, 'id'],
+                "populate_list": [type+'_'+element.name+'['+rowNo+']', type+'_'+element.id_name+'['+rowNo+']'],
+                "required_list": [type+'_'+element.id_name+'['+rowNo+']'],
                 "conditions": [{
                     "name": element.rname,
                     "op": "like_custom",
@@ -153,8 +155,7 @@ function getFieldsByType(element, rowNo, type){
             };
             let popup = 'open_popup("'+element.module+'", 600, 400, "", true, false, {"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{"id":"'+ type+'_'+element.id_name+rowNo+'","'+element.rname+'":"'+type+'_'+element.name+rowNo+'"}}, "single", true)';
             let clear = 'SUGAR.clearRelateField(this.form, "'+ type+'_'+element.name+rowNo+'", "'+ type+'_'+element.id_name+rowNo+'")';
-            html = "<div class='relatetype'><input class='sqsEnabled' type='text' name='"+type+'_'+element.name+"[]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' ><input type='hidden' name='"+ type+'_'+element.id_name+"[]' id='"+ type+'_'+element.id_name+rowNo+"' value=''><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+popup+"'><span class=\"suitepicon suitepicon-action-select\"></span></button><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+clear+"'><span class=\"suitepicon suitepicon-action-clear\"></span></button></div>";
-            enableQS(true);
+            html = "<div class='relatetype'><input class='sqsEnabled' type='text' name='"+type+'_'+element.name+"["+rowNo+"]' id='" + type+'_'+element.name+rowNo + "'  value='' title='' ><input type='hidden' name='"+ type+'_'+element.id_name+"["+rowNo+"]' id='"+ type+'_'+element.id_name+rowNo+"' value=''><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+popup+"'><span class=\"suitepicon suitepicon-action-select\"></span></button><button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button "+type+'_'+element.name+"_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='"+clear+"'><span class=\"suitepicon suitepicon-action-clear\"></span></button></div>";
         return html;
         
     }

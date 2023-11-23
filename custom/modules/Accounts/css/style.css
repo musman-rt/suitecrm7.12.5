@@ -89,3 +89,7 @@ button.contact_delete {
     margin-right: 0;
     clear: both;
 }
+
+.yui-ac-content{
+    width: auto !important;
+}
