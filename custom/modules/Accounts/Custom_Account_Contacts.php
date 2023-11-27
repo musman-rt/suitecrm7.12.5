@@ -97,13 +97,12 @@ function get_fields_defs($tabSubpanelDefs, $tabModule, $view){
     $i = 0;
     
     foreach($tabSubpanelDefs as $key => $value){
-        if(!empty($dummyBean->field_defs[$key]['name']) && (!isset($dummyBean->field_defs[$key]['fields']) || $view == 'DetailView')){
+        if(!empty($dummyBean->field_defs[$key]['name']) && ($value['usage'] != 'query_only' || $view == 'EditView')){
             $fields_list[$i]['name'] = $dummyBean->field_defs[$key]['name'];
             $fields_list[$i]['type'] = $dummyBean->field_defs[$key]['type'];
             $fields_list[$i]['vname'] = $dummyBean->field_defs[$key]['vname'];
             $fields_list[$i]['label'] = translate($dummyBean->field_defs[$key]['vname'], 'Contacts');
             $fields_list[$i]['required'] = $dummyBean->field_defs[$key]['required'];
-            $fields_list[$i]['fields'] = $dummyBean->field_defs[$key]['fields'];
             if($dummyBean->field_defs[$key]['type'] == 'relate'){
                 $fields_list[$i]['module'] = $dummyBean->field_defs[$key]['module'];
                 $fields_list[$i]['id_name'] = $dummyBean->field_defs[$key]['id_name'];
